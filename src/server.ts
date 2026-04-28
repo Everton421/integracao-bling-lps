@@ -42,7 +42,9 @@ import { ApiConfigRepository } from './dataAcess/api-config-repository/api-confi
 
                     const mainJob = new Job();
                       await mainJob.main();
-                    } 
+                    } else{
+                        console.log("[X] tarefas cron inativa")
+                    }
          
                     }
 
