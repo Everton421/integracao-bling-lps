@@ -17,6 +17,7 @@ import { SyncStock } from "./Services/sync-stock/sync-stock";
 import { SyncProduct } from "./Services/sync-products.ts/sync-product";
 import { testeNf } from "./__test__/teste-nf";
 import { testeNaturezaOperacao } from "./__test__/teste-natureza-operacao";
+import { SyncCompany } from "./Services/sync-company/sync-company";
 
 const router = Router();
 
@@ -64,8 +65,12 @@ router.get('/configuracoes', async (req, res) => {
   let objProdutos = new ProdutoRepository();
   let tabelasDePreco = await objProdutos.buscaTabelaDePreco();
   let setores = await setorRepository.buscaSetor()
-  const authorizationUrlApiBling = "https://intersig.com.br";
-  res.render('configuracoes', { dados: dadosConfig[0], tabelas: tabelasDePreco, setores: setores , authorization: authorizationUrlApiBling})
+  const client_id = process.env.CLIENT_ID;
+  const secret = process.env.CLIENT_SECRET;
+
+  const authorizationUrlApiBling = `https://www.bling.com.br/Api/v3/oauth/authorize?response_type=code&client_id=${client_id}&state=5f8c227b11184e3a0ee2426406429fda`;
+  
+  res.render('configuracoes', { dados: dadosConfig[0], tabelas: tabelasDePreco, setores: setores , url_authorization: authorizationUrlApiBling})
 
 })
 
@@ -115,9 +120,22 @@ router.get('/depositos', async (req, res) => {
 })
 router.post('/ajusteConfig', verificaToken, new apiController().ajusteConfig)
 
+//////////////////////////////////////////////////////////////////////////////////
+
 router.get("/testeNf",async  ( req, res )=>{
     await testeNf();
 })
+
+router.get("/testeCompany",async  ( req, res )=>{
+ const syncCompany = new SyncCompany();
+ 
+ async function teste(){
+     await syncCompany.getBasicDataCompany(); 
+ }
+ 
+ teste()
+})
+
 router.get("/testeNaturezaOperacao",async  ( req, res )=>{
     await testeNaturezaOperacao();
 })

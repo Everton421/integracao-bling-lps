@@ -1,5 +1,5 @@
-# Host: 177.125.218.237  (Version 5.5.5-10.6.22-MariaDB-0ubuntu0.22.04.1)
-# Date: 2026-03-16 08:03:07
+# Host: 192.168.100.106  (Version 11.3.2-MariaDB)
+# Date: 2026-04-28 14:46:24
 # Generator: MySQL-Front 6.1  (Build 1.26)
 
 
@@ -17,7 +17,6 @@ CREATE TABLE `categorias` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
  
-
 DROP TABLE IF EXISTS `clientes`;
 CREATE TABLE `clientes` (
   `Id_bling` varchar(255) NOT NULL DEFAULT '',
@@ -26,7 +25,6 @@ CREATE TABLE `clientes` (
   `data_envio` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`Id_bling`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-
  
 
 DROP TABLE IF EXISTS `config`;
@@ -42,7 +40,24 @@ CREATE TABLE `config` (
   `ult_env_preco` datetime DEFAULT '2000-01-01 00:00:00',
   `ult_env_estoque` datetime DEFAULT '2000-01-01 00:00:00',
   `ult_env_produto` datetime DEFAULT '2000-01-01 00:00:00',
+  `caminho_fotos` blob DEFAULT NULL,
   PRIMARY KEY (`Id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+ 
+
+INSERT INTO `config` VALUES (1,0,0,0,1,'E',0,1,'2026-03-27 16:00:00','2026-03-27 16:00:08','2026-04-27 09:00:00',NULL);
+
+ 
+
+DROP TABLE IF EXISTS `config_nfe`;
+CREATE TABLE `config_nfe` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_natureza_operacao` varchar(255) DEFAULT NULL,
+  `natureza_operacao` varchar(255) DEFAULT NULL,
+  `transacao_sistema` varchar(255) DEFAULT NULL,
+  `codigo_transacao_sistema` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
  
@@ -64,17 +79,11 @@ CREATE TABLE `pedidos` (
   `codigo_sistema` int(11) NOT NULL DEFAULT 0,
   `data_insercao` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `situacao` char(2) DEFAULT NULL,
+  `nf` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`Id_bling`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
-#
-# Data for table "pedidos"
-#
-
-
-#
-# Structure for table "produtos"
-#
+ 
 
 DROP TABLE IF EXISTS `produtos`;
 CREATE TABLE `produtos` (
@@ -92,7 +101,6 @@ CREATE TABLE `produtos` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
  
-
 DROP TABLE IF EXISTS `produtos_get`;
 CREATE TABLE `produtos_get` (
   `Id_bling` varchar(255) NOT NULL DEFAULT '0',
@@ -102,14 +110,7 @@ CREATE TABLE `produtos_get` (
   PRIMARY KEY (`Id_bling`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
-#
-# Data for table "produtos_get"
-#
-
-
-#
-# Structure for table "tokens"
-#
+ 
 
 DROP TABLE IF EXISTS `tokens`;
 CREATE TABLE `tokens` (
