@@ -38,12 +38,14 @@ import { ApiConfigRepository } from './dataAcess/api-config-repository/api-confi
                 async function tarefas(){ 
                     
                     const dataApiConfig = await apiConfigRepository.buscaConfig();
-                    if(dataApiConfig.length > 0 && dataApiConfig[0].tarefas_cron > 0  ){
-
-                    const mainJob = new Job();
-                      await mainJob.main();
-                    } else{
-                        console.log("[X] tarefas cron inativa")
+                    if(dataApiConfig.length > 0     ){
+                            if(dataApiConfig[0].tarefas_cron > 0){
+                                    const mainJob = new Job();
+                                  await mainJob.main();
+                            } else{
+                                console.log("[X] tarefas cron inativa")
+                          }
+                         
                     }
          
                     }
