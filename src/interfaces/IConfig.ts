@@ -11,5 +11,5 @@ setor:number
           ult_env_estoque? : string | '2000-01-01 00:00:00'
           ult_env_produto? : string | '2000-01-01 00:00:00'
           caminho_fotos:string
-
+tarefas_cron: number
 }

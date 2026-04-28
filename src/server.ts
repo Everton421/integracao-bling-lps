@@ -4,12 +4,10 @@ import 'dotenv/config';
 import express, { NextFunction, Request, Response } from 'express';
 import "express-async-errors";
 import path from 'path';
-const https = require('https');
-const fs = require('fs');
 
-import { JobPrice } from './jobs/job-price';
 import { router } from './routes';
 import { Job } from './jobs/main';
+import { ApiConfigRepository } from './dataAcess/api-config-repository/api-config-repository';
 
         const app = express();
 
@@ -34,11 +32,19 @@ import { Job } from './jobs/main';
                     })
                 })
 
+                const apiConfigRepository = new ApiConfigRepository();
+
+                    
                 async function tarefas(){ 
-                     const mainJob = new Job();
+                    
+                    const dataApiConfig = await apiConfigRepository.buscaConfig();
+                    if(dataApiConfig.length > 0 && dataApiConfig[0].tarefas_cron > 0  ){
+
+                    const mainJob = new Job();
                       await mainJob.main();
+                    } 
          
-            }
+                    }
 
             tarefas();
 
