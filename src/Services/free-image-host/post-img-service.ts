@@ -48,8 +48,21 @@ export class PostFreeImgHost {
 
 
     private async postFreeImgHost(caminho: string, foto: string) {
+                 let photoName = foto; 
 
-            const imagePath = path.join(caminho, foto); // Caminho para a imagem
+                    if(foto.endsWith('.PNG') ){
+                        photoName = foto.replace('.PNG', '.png');
+                        }
+                    if(foto.endsWith('.JPG') ){
+                        photoName = foto.replace('.JPG', '.jpg');
+                      }
+                        
+                      if(foto.endsWith('.JPEG') ){
+                        photoName = foto.replace('.JPEG', '.jpeg');
+                       }
+
+
+            const imagePath = path.join(caminho, photoName); // Caminho para a imagem
             if (await this.fileExists(imagePath)) {
              //   console.log('Arquivo encontrado caminho: ', imagePath)
 
