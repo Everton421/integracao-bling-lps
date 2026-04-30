@@ -282,7 +282,7 @@ export class  SyncProduct{
                         
 
                     // processa o produto retornando os dados do produto de acordo com o que a api do bling esta esperando.
-                    const produtoBling = await this.produtoMapper.postProdutoMapper(prodSelected, categoryId, envPreco,tabela_preco );
+                    const produtoBling = await this.produtoMapper.postProdutoMapper(prodSelected,envPreco, categoryId,  tabela_preco );
                     
                     await this.delay(1000);  
                     // se o produto selecionado for encontrado, faz a atualização.
