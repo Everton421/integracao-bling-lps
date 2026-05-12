@@ -1,10 +1,10 @@
-import { pedidoController } from "../controllers/pedido-controller/pedido-controller";
-import { ApiConfigRepository } from "../dataAcess/api-config-repository/api-config-repository";
+import { pedidoController } from "../core/orders/controller/pedido-controller";
+import { ApiConfigRepository } from "../core/company/data/api-config-repository";
 import { IConfig } from "../interfaces/IConfig";
-import { verificaTokenTarefas } from "../Middlewares/TokenMiddleware";
-import { SyncORders } from "../Services/sync-orders/sync-orders";
-import { SyncPrice } from "../Services/sync-price/sync-price";
-import { SyncStock } from "../Services/sync-stock/sync-stock";
+import { verificaTokenTarefas } from "../shared/Middlewares/TokenMiddleware";
+import { SyncORders } from "../core/orders/services/http-request-orders";
+import { SyncPrice } from "../core/prices/services/sync-price";
+import { SyncStock } from "../core/inventory/services/sync-stock";
 import { JobPrice } from "./job-price";
 import { JobProduto } from "./job-produto";
 var cron = require('node-cron');

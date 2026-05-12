@@ -19,6 +19,8 @@ export interface IProductSystem  {
     REF:string,
     MARCA:string,
     GRUPO:number
+    TITULO_SITE:string,
+     TITULO_MKTPLACE:string,
     DESCR_CURTA_SITE:string,
     DESCR_LONGA_SITE:string,
     DESCR_CURTA_MKTPLACE:string

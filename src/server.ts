@@ -5,16 +5,16 @@ import express, { NextFunction, Request, Response } from 'express';
 import "express-async-errors";
 import path from 'path';
 
-import { router } from './routes';
+import { router } from './web/routes';
 import { Job } from './jobs/main';
-import { ApiConfigRepository } from './dataAcess/api-config-repository/api-config-repository';
+import { ApiConfigRepository } from './core/company/data/api-config-repository';
 
         const app = express();
 
         app.set('view engine', 'ejs')
         app.use(bodyParser.urlencoded({ extended: true }))
         app.use(bodyParser.json())
-        app.set('views', path.join(__dirname, 'Views'));
+        app.set('views', path.join(__dirname, 'web/Views'));
         
         app.use(express.json());    
         app.use(router)

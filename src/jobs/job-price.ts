@@ -1,9 +1,9 @@
-import { ApiConfigRepository } from "../dataAcess/api-config-repository/api-config-repository";
-import { ProdutoApiRepository } from "../dataAcess/api-produto-repository/produto-api-repository";
-import { ProdutoRepository } from "../dataAcess/produto-repository/produto-repository";
-import { verificaTokenTarefas } from "../Middlewares/TokenMiddleware";
-import ConfigApi from "../Services/api/api";
-import { DateService } from "../Services/dateService/date-service";
+import { ApiConfigRepository } from "../core/company/data/api-config-repository";
+import { ProdutoApiRepository } from "../core/products/data/produto-api-repository";
+import { ProdutoRepository } from "../core/products/data/produto-repository";
+import { verificaTokenTarefas } from "../shared/Middlewares/TokenMiddleware";
+import ConfigApi from "../shared/api";
+import { DateService } from "../shared/date-service";
 
    export class JobPrice{
     private api = new ConfigApi();

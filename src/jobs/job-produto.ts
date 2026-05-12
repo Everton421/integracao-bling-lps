@@ -1,7 +1,7 @@
-import { ApiConfigRepository } from "../dataAcess/api-config-repository/api-config-repository";
-import { ProdutoApiRepository } from "../dataAcess/api-produto-repository/produto-api-repository";
-import { DateService } from "../Services/dateService/date-service";
-import { SyncProduct } from "../Services/sync-products.ts/sync-product";
+import { ApiConfigRepository } from "../core/company/data/api-config-repository";
+import { ProdutoApiRepository } from "../core/products/data/produto-api-repository";
+import { DateService } from "../shared/date-service";
+import { SyncProduct } from "../core/products/services/sync-product";
 
 export class JobProduto{
     private syncProduct = new SyncProduct();
@@ -23,7 +23,7 @@ export class JobProduto{
             if(produtos.length > 0 ){
                 console.log(`[V] enviando/atualizando ${produtos.length} produtos...`)
                     for (const i of produtos) {
-                        let result: any = await this.syncProduct.postAndPutProd(Number(i.CODIGO), true );
+                        let result: any = await this.syncProduct.postOrPutProductBling(Number(i.CODIGO), true );
                         if (result.resultados) {
                             arrResult.push(result.resultados)
                         }
