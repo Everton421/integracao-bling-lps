@@ -48,6 +48,43 @@ router.get('/produtos', verificaToken, async (req, res) => {
   res.render('produtos', { 'produtos': produtos, 'tabelas': tabelas });
 })
 
+
+router.get('/produtos/:codigo', verificaToken, async (req, res) => {
+  try{
+
+  const codigo = req.params.codigo;
+
+  const arrProduto  = await produtoRepository.buscaProduto(Number(codigo));
+
+  const arrEstoque = await produtoRepository.buscaEstoqueReal(Number(codigo));
+
+    let produto = arrProduto[0] as any;
+
+    produto = { ...produto, 'ESTOQUE':arrEstoque[0].ESTOQUE };
+
+  res.render('produtos/produto-editar', {  produto : produto   });
+ 
+  }catch(e){
+        console.error("Erro ao carregar produto:", e);
+
+        res.status(500).send("Erro interno.");
+  }
+})
+
+router.post('/api/produtos', verificaToken, async (req: Request, res: Response) => {
+  const obj = new ProdutoController()
+
+  let dadosConfig = await apiConfigRepository.buscaConfig();
+   
+   if (dadosConfig[0].enviar_produtos === 'E') {
+     await obj.enviaProduto(req, res);
+   } 
+   if (dadosConfig[0].enviar_produtos === 'S') {
+      await obj.geraVinculo(req, res);
+   }
+})
+
+
 router.get('/categorias', verificaToken, async (req, res) => {
   const data = await categoryRepository.buscaGrupoIndex()
   res.render('categorias', { 'categorias': data })
@@ -74,18 +111,7 @@ router.get('/configuracoes', async (req, res) => {
 
 })
 
-router.post('/api/produtos', verificaToken, async (req: Request, res: Response) => {
-  const obj = new ProdutoController()
 
-  let dadosConfig = await apiConfigRepository.buscaConfig();
-   
-   if (dadosConfig[0].enviar_produtos === 'E') {
-     await obj.enviaProduto(req, res);
-   } 
-   if (dadosConfig[0].enviar_produtos === 'S') {
-      await obj.geraVinculo(req, res);
-   }
-})
 
 
 router.post('/api/categorias', async (req, res) => {

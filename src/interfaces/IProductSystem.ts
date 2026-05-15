@@ -21,12 +21,14 @@ export interface IProductSystem  {
     GRUPO:number
     TITULO_SITE:string,
      TITULO_MKTPLACE:string,
+     APLICACAO:string
     DESCR_CURTA_SITE:string,
     DESCR_LONGA_SITE:string,
     DESCR_CURTA_MKTPLACE:string
     DESCR_LONGA_MKTPLACE:string
-
-}
+    NUM_FABRICANTE:string
+    QTDE_VOL:number
+}   
 
  
 

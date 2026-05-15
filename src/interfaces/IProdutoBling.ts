@@ -12,10 +12,14 @@ export interface IProdutoBling{
     largura:number,
     altura:number,
     profundidade:number,
+    marca:string
     dimensoes:dimensoes,
     tributacao:tributacao,
     categoria?:categoria
     midia?:midia
+    volumes:number
+    tipoProducao:string
+    gtin:string
 }
 interface categoria{
     id:any
@@ -34,6 +38,7 @@ interface dimensoes{
     largura:number,
     altura:number,
     profundidade:number,
+    unidadeMedida:number
 }
 interface tributacao{
     ncm:string | null,

@@ -1,5 +1,5 @@
 import { conn,    db_estoque, db_publico, db_vendas } from "../../../database/databaseConfig" ;
-import { IProductSystem } from "../../../interfaces/IProduct";
+import { IProductSystem } from "../../../interfaces/IProductSystem";
 
 type prodPreco = {
   PRECO:number, PRODUTO:number, TABELA:number, DATA_RECAD:string  
@@ -27,8 +27,17 @@ export class ProdutoRepository{
 
      async buscaProduto(codigo:number):Promise<IProductSystem[]>{
       return new Promise( async (resolve, reject)=>{
-          let sql = `SELECT * FROM ${db_publico}.cad_prod WHERE NO_SITE = 'S' AND CODIGO = ${codigo};`;
-          await conn.query(sql, async (err:any,result:IProductSystem[])=>{
+          let sql = `SELECT 
+          
+            *,
+             coalesce(DATE_FORMAT( DATA_RECAD, '%Y-%m-%d %H:%i:%s') ,'0000-00-00 00:00:00') AS DATA_RECAD,
+             coalesce(DATE_FORMAT( DATA_CADASTRO, '%Y-%m-%d') ,'0000-00-00 00:00:00') AS DATA_CADASTRO,
+
+                CAST( APLICACAO AS CHAR(10000) CHARACTER SET latin1) AS APLICACAO 
+
+           FROM ${db_publico}.cad_prod WHERE NO_SITE = 'S' AND CODIGO = ${codigo};`;
+          
+           await conn.query(sql, async (err:any,result:IProductSystem[])=>{
             if(err){
               return reject(err);
             }else{
@@ -39,10 +48,10 @@ export class ProdutoRepository{
       });
  
    }
-    async buscaEstoqueReal(codigo:number, setor:number ):Promise<[{CODIGO:number, ESTOQUE:number, DATA_RECAD:string }]>{
+    async buscaEstoqueReal(codigo?:number, setor?:number ):Promise<[{CODIGO:number, ESTOQUE:number, DATA_RECAD:string }]>{
       return new Promise( async (resolve, reject)=>{
                             
-      const sql = `
+      const baseSql = `
                   SELECT  
                         est.CODIGO,
                         IF(est.estoque < 0, 0, est.estoque) AS ESTOQUE,
@@ -61,12 +70,24 @@ export class ProdutoRepository{
                         LEFT JOIN ${db_publico}.cad_prod AS P ON P.CODIGO = PS.PRODUTO
                         INNER JOIN ${db_publico}.cad_pgru AS G ON P.GRUPO = G.CODIGO
                         LEFT JOIN ${db_estoque}.setores AS S ON PS.SETOR = S.CODIGO
-                        WHERE P.CODIGO = ${codigo}
-                        AND PS.SETOR = ${setor}
-                        GROUP BY P.CODIGO) AS est;
+                       
                   `
 
-    await conn.query( sql ,(err:any , result:any)=>{
+                  let whereClause = ` WHERE `
+
+                if(codigo){
+                    whereClause += `  P.CODIGO = ${codigo} ` 
+                  }
+
+                  if(setor){
+                    whereClause += ` AND PS.SETOR = ${setor} ` 
+                  }
+
+                  const groupBy = ` GROUP BY P.CODIGO) AS est; `; 
+
+        const finalSql = baseSql + whereClause + groupBy;
+
+    await conn.query( finalSql ,(err:any , result:any)=>{
         if(err){
           reject(err)
           console.log('erro ao obter o saldo de estoque')
@@ -148,6 +169,25 @@ export class ProdutoRepository{
     async buscaNcm( codigo:any):Promise< [ { CODIGO:number, NCM:string, COD_CEST: string } ] >{
     return new Promise( async (resolve, reject)=>{
         const sql = `SELECT CODIGO  , NCM  , COD_CEST   FROM ${db_publico}.class_fiscal where CODIGO=${codigo};` 
+      await conn.query(sql,(err, result)=>{
+        if(err){
+          reject(err);
+        }else{  
+          resolve(result);
+        }
+      })
+    })
+  }
+
+
+    /**
+     * 
+     * @param codigo codigo da marca
+     * @returns 
+     */
+    async buscaMarcaProduto( codigo:any):Promise< [ { CODIGO:number, DESCRICAO:string  } ] >{
+    return new Promise( async (resolve, reject)=>{
+        const sql = `SELECT CODIGO  ,DESCRICAO   FROM ${db_publico}.cad_pmar where CODIGO=${codigo};` 
       await conn.query(sql,(err, result)=>{
         if(err){
           reject(err);

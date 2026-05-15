@@ -147,6 +147,7 @@ export class ProdutoController {
         const produtoSelecionados: string[] = req.body.produtos;
         let arrResult = []
         for (const i of produtoSelecionados) {
+            
             let result: any = await this.syncProduct.postOrPutProductBling(Number(i), false);
             if (result.resultados) {
                 arrResult.push(result.resultados)

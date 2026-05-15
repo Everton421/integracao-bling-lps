@@ -1,4 +1,4 @@
-import { IProductSystem } from "../../../interfaces/IProduct";
+import { IProductSystem } from "../../../interfaces/IProductSystem";
 import { PostFreeImgHost } from "../../imgs/services/post-img-service";
 import { IProdutoBling } from "../../../interfaces/IProdutoBling";
 import { ProdutoRepository } from "../data/produto-repository";
@@ -30,14 +30,18 @@ export class ProdutoMapper {
         preco = arrPreco[0].PRECO;
       }
 
+          const arrMarca = await produtoRepository.buscaMarcaProduto(produto.MARCA)
+
+      const marca = arrMarca && arrMarca.length > 0 ?  arrMarca[0].DESCRICAO : '';
 
       const arrNcm = await produtoRepository.buscaNcm(produto.CODIGO);
-      const ncm = arrNcm[0].NCM
-      const cod_cest = arrNcm[0].COD_CEST
+      
+      const ncm = arrNcm && arrNcm.length > 0 ? arrNcm[0].NCM : null;
+      const cod_cest = arrNcm && arrNcm.length > 0 ? arrNcm[0].COD_CEST : null;
+      
       const arrUnidades = await produtoRepository.buscaUnidades(produto.CODIGO);
       const unidade = arrUnidades[0].SIGLA
- 
-
+    const  gtin = produto.NUM_FABRICANTE
       //envio de imagen
       //let links = await imgController.postFoto( produto ) ;
       let links = await freeImgHost.postFoto(produto) as [{ link: string }];
@@ -45,19 +49,23 @@ export class ProdutoMapper {
 
       const post: IProdutoBling = {
         codigo: produto.CODIGO,
-        nome: produto.TITULO_MKTPLACE,
-        descricaoCurta: produto.DESCR_CURTA_MKTPLACE,
-        descricaoComplementar: produto.DESCR_LONGA_MKTPLACE,
+        nome: produto.DESCRICAO,
+        descricaoCurta: produto.APLICACAO,
+        descricaoComplementar: produto.DESCR_LONGA_MKTPLACE || '',
         tipo: 'P',
+        marca: marca,
         situacao: 'A',
+        gtin:gtin ,
         unidade: unidade,
+        tipoProducao:'T',
+        volumes: produto.QTDE_VOL,
         preco: preco,
         pesoBruto: produto.PESO,
         formato: 'S',
         largura: produto.LARGURA,
         altura: produto.ALTURA,
         profundidade: produto.COMPRIMENTO,
-        dimensoes: { altura: produto.ALTURA, largura: produto.LARGURA, profundidade: produto.COMPRIMENTO },
+        dimensoes: { altura: produto.ALTURA, largura: produto.LARGURA, profundidade: produto.COMPRIMENTO  ,unidadeMedida :1},
         tributacao: { cest: cod_cest, ncm: ncm, },
         midia: {
           imagens: {
@@ -72,7 +80,7 @@ export class ProdutoMapper {
     })
   }
 
-
+          
 
 
 }

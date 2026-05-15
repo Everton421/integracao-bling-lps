@@ -1,5 +1,5 @@
 import { conn,    db_estoque, db_publico, db_vendas } from "../../../database/databaseConfig" ;
-import { IProductSystem } from "../../../interfaces/IProduct";
+import { IProductSystem } from "../../../interfaces/IProductSystem";
 import { ISetor } from "../../../interfaces/setores";
 
 export class SetorRepository{

@@ -1,6 +1,6 @@
 import { IResponseErrorApi } from "../../../interfaces/IResponseErrorApi";
 import { IProdutoBlingSemPreco, ProdutoMapper } from "../mapping/produto-mapper";
-import { IProductSystem } from "../../../interfaces/IProduct";
+import { IProductSystem } from "../../../interfaces/IProductSystem";
 import ConfigApi from "../../../shared/api";
 import { DateService } from "../../../shared/date-service";
 import { SyncPrice } from "../../prices/services/sync-price";
@@ -259,7 +259,8 @@ export class  SyncProduct{
                     // busca o item no banco de dados do sistema
                     const arrProdSelected = await this.produto.buscaProduto(codigoSelecionado);
 
-                    if (!arrProdSelected || arrProdSelected.length === 0) {
+                    
+                        if (!arrProdSelected || arrProdSelected.length === 0) {
                         resultadoOperacao = { codigo: codigoSelecionado, success: false, msg: `Produto ${codigoSelecionado} não encontrado no sistema de origem.` };
                         console.log(resultadoOperacao.msg);
 
