@@ -18,6 +18,7 @@ import { SyncProduct } from "../core/products/services/sync-product";
 // import { testeNf } from "../__test__/teste-nf";
 // import { testeNaturezaOperacao } from "../__test__/teste-natureza-operacao";
 import { SyncCompany } from "../core/company/services/sync-company";
+import { ProdutoEditarController } from "../core/products/controller/produto-editar-controller";
 
 const router = Router();
 
@@ -51,28 +52,7 @@ router.get('/produtos', verificaToken, async (req, res) => {
 })
 
 
-router.get('/produtos/:codigo', verificaToken, async (req, res) => {
-  try{
-
-  const codigo = req.params.codigo;
-
-  const arrProduto  = await produtoRepository.buscaProduto(Number(codigo));
-
-  const arrEstoque = await produtoRepository.buscaEstoqueReal(Number(codigo));
-
-    let produto = arrProduto[0] as any;
-
-    produto = { ...produto, 'ESTOQUE':arrEstoque[0].ESTOQUE };
-
-  res.render('produtos/produto-editar', {  produto : produto   });
-  
- 
-  }catch(e){
-        console.error("Erro ao carregar produto:", e);
-
-        res.status(500).send("Erro interno.");
-  }
-})
+router.get('/produtos/:codigo', verificaToken, new ProdutoEditarController().execute)
 
 router.post('/api/produtos', verificaToken, async (req: Request, res: Response) => {
   const obj = new ProdutoController()

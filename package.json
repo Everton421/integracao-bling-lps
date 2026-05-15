@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "ts-node-dev --transpile-only src/server.ts",
-    "build": "tsc && shx cp -r src/web/Views dist/web/Views"
+    "build": "tsc && shx cp -r src/web/Views dist/web/Views",
+    "start": "node /dics/server.js"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
