@@ -17,7 +17,7 @@ export class ProdutoMapper {
    * @param tabela codigo da tabela de preço a ser enviada 
    * @returns 
    */
-  async postProdutoMapper(produto: IProductSystem, sendPrice: number, categoryIdBling: number, tabela?: number): Promise<IProdutoBlingSemPreco> {
+ static async postProdutoMapper(produto: IProductSystem, sendPrice: number, categoryIdBling: number, tabela?: number): Promise<IProdutoBlingSemPreco> {
     return new Promise(async (resolve, reject) => {
 
       const produtoRepository = new ProdutoRepository();

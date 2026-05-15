@@ -46,6 +46,8 @@ router.get('/produtos', verificaToken, async (req, res) => {
   const produtos = await produtoApiRepository.buscaTodos();
   const tabelas = await produtoRepository.buscaTabelaDePreco();
   res.render('produtos', { 'produtos': produtos, 'tabelas': tabelas });
+
+
 })
 
 
@@ -63,6 +65,7 @@ router.get('/produtos/:codigo', verificaToken, async (req, res) => {
     produto = { ...produto, 'ESTOQUE':arrEstoque[0].ESTOQUE };
 
   res.render('produtos/produto-editar', {  produto : produto   });
+  
  
   }catch(e){
         console.error("Erro ao carregar produto:", e);

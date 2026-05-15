@@ -108,6 +108,8 @@
                                         <th scope="col">Nome/Descrição</th>
                                         <th scope="col" class="price-column">variacao</th>
                                         <th scope="col" class="stock-column">Saldo Enviado</th>
+                                        <th scope="col" class="text-center">Ações</th>
+
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -152,6 +154,9 @@
                                                 <% } else { %>
                                                     N/A
                                                 <% } %>
+                                            </td>
+                                             <td class="text-center">
+                                                <a href="/produtos/<%= item.CODIGO %>" class="btn btn-sm btn-outline-primary"><span data-feather="edit"></span></a>
                                             </td>
                                         </tr>
                                     <% }) %>

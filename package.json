@@ -5,13 +5,13 @@
   "license": "MIT",
   "scripts": {
     "dev": "ts-node-dev --transpile-only src/server.ts",
-    "build":"tsc"
-  
+    "build": "tsc && shx cp -r src/web/Views dist/web/Views"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/mysql": "^2.15.25",
+    "shx": "^0.4.0",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.3.3"
   },
