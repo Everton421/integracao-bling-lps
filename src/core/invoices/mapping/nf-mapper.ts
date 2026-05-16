@@ -1,7 +1,6 @@
 import { CadNf } from "../../../interfaces/cad_nf";
 import { CadClie } from "../../../interfaces/cad_clie";
-import { CadForn } from "../../../interfaces/cad_forn";
-import { ItensNota, NotaFiscalCompleta } from "../data/nf-data-acess";
+import { ItensNota,   } from "../data/nf-data-acess";
 import { MvtoTributos } from "../../../interfaces/mvto_tributos";
 import { CtReceb } from "../../../interfaces/ct_receb";
 import { DateService } from "../../../shared/utils/date-service";
@@ -282,7 +281,7 @@ export class NfMapper {
             const valor = dadosNota.TOTAL_NF / dadosNota.QTDE_PARCELAS; 
         for (let i = 0; i <= dadosNota.QTDE_PARCELAS ; i++) {
             parcelas.push({
-                data: this.dateService.formatarData(dadosNota.DATA_EMISSAO) as any, 
+                data: DateService.formatarData(dadosNota.DATA_EMISSAO) as any, 
                 valor: valor,
                 formaPagamento: {
                     id:  1

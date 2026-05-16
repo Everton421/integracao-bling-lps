@@ -16,7 +16,7 @@ type OkPacket = {
   changedRows: number
 }
 export class CategoriaApiRepository{
-    private dateService = new DateService();
+ 
 
     formatDescricao(descricao: string): string {
         return descricao.replace(/'/g, '');
@@ -58,7 +58,7 @@ export class CategoriaApiRepository{
     async insertCategorApi( valuesInsertCategoy:{ id_bling:number, sistemCode:number, description:string, } ){
         return new Promise( async (resolve,reject)=>{
 
-            let dataInsercao = this.dateService.obterDataHoraAtual()
+            let dataInsercao = DateService.obterDataHoraAtual()
             
             const { id_bling, sistemCode , description} = valuesInsertCategoy;
 
@@ -83,7 +83,7 @@ export class CategoriaApiRepository{
     :Promise<OkPacket>{
         return new Promise( async (resolve,reject)=>{
 
-            let dataInsercao = this.dateService.obterDataHoraAtual()
+            let dataInsercao = DateService.obterDataHoraAtual()
             
             const { id_bling, sistemCode , description} = valuesupdateCategoy;
 

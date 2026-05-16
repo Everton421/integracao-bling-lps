@@ -13,8 +13,8 @@ export class PedidoMapper{
  async   cadOrcaMapper( pedido:any, codigoCliente:number, vendedor:number,qtdParcelas:number ){
                       const  api = new ConfigApi();
                await  api.configurarApi();
-             const data_cadastro = this.dateService.obterDataAtual();
-             const hora_cadastro = this.dateService.obterHoraAtual(); 
+             const data_cadastro = DateService.obterDataAtual();
+             const hora_cadastro = DateService.obterHoraAtual(); 
                  
              let statusPedido =0;
                         let tipoLoja = '';

@@ -1,22 +1,18 @@
 import { ProdutoApiRepository } from "../../products/data/produto-api-repository";
 import { ProdutoRepository } from "../../products/data/produto-repository";
 import ConfigApi from "../../../shared/api";
-import { DateService } from "../../../shared/utils/date-service";
 import { verificaTokenTarefas } from "../../../shared/Middlewares/TokenMiddleware";
+import { DateService } from "../../../shared/utils/date-service";
 
 export class SyncPrice {
 
     private api = new ConfigApi();
-    private dateService = new DateService();
-    private produtoApi = new ProdutoApiRepository();
-    private produtoRepository = new ProdutoRepository();
-
+ 
 
     private delay(ms: number) {
         console.log(`Aguardando ${ms / 1000} segundos para enviar o preço...`);
         return new Promise(resolve => setTimeout(resolve, ms));
     }
-
 
 
     /**
@@ -27,8 +23,8 @@ export class SyncPrice {
     async postPrice(idProdutobling: string, codigoProdutoSistema: number, tabela: number) {
         await this.api.configurarApi();
 
-        const resultPrecoSistema = await this.produtoRepository.buscaPreco(codigoProdutoSistema, tabela);
-        const resultPrecoEnviado = await this.produtoApi.findByIdBling(idProdutobling);
+        const resultPrecoSistema = await ProdutoRepository.buscaPreco(codigoProdutoSistema, tabela);
+        const resultPrecoEnviado = await ProdutoApiRepository.findByIdBling(idProdutobling);
         if (resultPrecoSistema.length === 0) {
             return { ok: false, erro: true, msg: `nao foi encontrado preco do produto ${codigoProdutoSistema} na table ${tabela}` }
         }
@@ -50,7 +46,7 @@ export class SyncPrice {
 
                 if (resultPrecoEnviado.status === 200 || resultPrecoEnviado.status === 201) {
                     await this.delay(1000);
-                    await this.produtoApi.updateByParama({ id_bling: idProdutobling, data_preco: this.dateService.obterDataHoraAtual() });
+                    await ProdutoApiRepository.updateByParama({ id_bling: idProdutobling, data_preco: DateService.obterDataHoraAtual() });
 
                     return { ok: true, erro: false, msg: "preco atualizado com sucesso!" }
 
@@ -69,11 +65,11 @@ export class SyncPrice {
             await this.api.configurarApi();
         
             try{
-            const produtosEnviados  = await this.produtoApi.buscaSincronizados();
+            const produtosEnviados  = await ProdutoApiRepository.buscaSincronizados();
             if (produtosEnviados.length > 0) {
                 for (const data of produtosEnviados) {
 
-                const resultPrecoSistema = await this.produtoRepository.buscaPreco(data.codigo_sistema, tabela);
+                const resultPrecoSistema = await ProdutoRepository.buscaPreco(data.codigo_sistema, tabela);
                     if( resultPrecoSistema.length > 0 ){
 
                             const precoProduto = resultPrecoSistema[0]
@@ -87,7 +83,7 @@ export class SyncPrice {
                                             const resultPrecoEnviado = await this.api.config.patch(`/produtos/${data.Id_bling}`, objPatch);
                                             if (resultPrecoEnviado.status === 200 || resultPrecoEnviado.status === 201) {
                                                 await this.delay(1000);
-                                                await this.produtoApi.updateByParama({ id_bling: data.Id_bling, data_preco: this.dateService.obterDataHoraAtual() });
+                                                await ProdutoApiRepository.updateByParama({ id_bling: data.Id_bling, data_preco: DateService.obterDataHoraAtual() });
                                               //  return { ok: true, erro: false, msg: "preco atualizado com sucesso!" }
                                                 console.log("preco atualizado com sucesso!")
                                             }

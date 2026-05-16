@@ -14,7 +14,7 @@ async insereToken(json:any, database:any){
           expires_in,
       } = json;
 
-      const dataInsercao = this.dateService.obterDataHoraAtual();
+      const dataInsercao = DateService.obterDataHoraAtual();
 
       const sql = `INSERT INTO ${database}.tokens (id, token, refresh_token, expires_in, ult_atualizacao) VALUES (1, '${access_token}', '${refresh_token}','${expires_in}','${dataInsercao}') 
                    ON DUPLICATE KEY UPDATE token = VALUES(token), refresh_token = VALUES(refresh_token), expires_in = VALUES(expires_in),  ult_atualizacao = VALUES(ult_atualizacao);`;

@@ -6,7 +6,6 @@ import { DateService } from "../../../shared/utils/date-service"
 
 export class PedidoApiRepository{
 
-        dateService = new DateService();
 
     async validaPedido( id:string ){
 
@@ -56,7 +55,7 @@ export class PedidoApiRepository{
                     situacao
                 } = json;
 
-                const data = this.dateService.obterDataHoraAtual();
+                const data = DateService.obterDataHoraAtual();
 
                 const sql = 
                 ` INSERT INTO ${database_api}.pedidos values ('${Id_bling}', '${codigo_sistema}', '${data}' , '${situacao}')` 
