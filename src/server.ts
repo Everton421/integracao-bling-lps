@@ -32,12 +32,10 @@ import { ApiConfigRepository } from './core/company/data/api-config-repository';
                     })
                 })
 
-                const apiConfigRepository = new ApiConfigRepository();
-
                     
                 async function tarefas(){ 
                     
-                    const dataApiConfig = await apiConfigRepository.buscaConfig();
+                    const dataApiConfig = await ApiConfigRepository.buscaConfig();
                     if(dataApiConfig.length > 0     ){
                             if(dataApiConfig[0].tarefas_cron > 0){
                                     const mainJob = new Job();

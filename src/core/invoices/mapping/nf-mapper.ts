@@ -4,7 +4,7 @@ import { CadForn } from "../../../interfaces/cad_forn";
 import { ItensNota, NotaFiscalCompleta } from "../data/nf-data-acess";
 import { MvtoTributos } from "../../../interfaces/mvto_tributos";
 import { CtReceb } from "../../../interfaces/ct_receb";
-import { DateService } from "../../../shared/date-service";
+import { DateService } from "../../../shared/utils/date-service";
 
 export interface BlingNotaFiscal {
     tipo: number;

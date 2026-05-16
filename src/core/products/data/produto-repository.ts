@@ -7,7 +7,7 @@ type prodPreco = {
 
 export class ProdutoRepository{
 
-    async buscaProdutos():Promise<IProductSystem[]>{
+    static async buscaProdutos():Promise<IProductSystem[]>{
 
         return new Promise( async (resolve, reject)=>{
           
@@ -25,7 +25,7 @@ export class ProdutoRepository{
   
      }
 
-     async buscaProduto(codigo:number):Promise<IProductSystem[]>{
+    static async buscaProduto(codigo:number):Promise<IProductSystem[]>{
       return new Promise( async (resolve, reject)=>{
           let sql = `SELECT 
           
@@ -48,7 +48,7 @@ export class ProdutoRepository{
       });
  
    }
-    async buscaEstoqueReal(codigo?:number, setor?:number ):Promise<[{CODIGO:number, ESTOQUE:number, DATA_RECAD:string }]>{
+   static async buscaEstoqueReal(codigo?:number, setor?:number ):Promise<[{CODIGO:number, ESTOQUE:number, DATA_RECAD:string }]>{
       return new Promise( async (resolve, reject)=>{
                             
       const baseSql = `
@@ -99,7 +99,7 @@ export class ProdutoRepository{
     }
 
 
-    async buscaTabelaDePreco( ):Promise<[ { CODIGO:number, FILIAL:number, DESCRICAO:String, PADRAO: 'S'| 'N'} ]>{
+  static  async buscaTabelaDePreco( ):Promise<[ { CODIGO:number, FILIAL:number, DESCRICAO:String, PADRAO: 'S'| 'N'} ]>{
       return new Promise( async (resolve, reject)=>{
         
       const sql=` SELECT * FROM ${db_publico}.tab_precos ORDER BY CODIGO DESC ;
@@ -116,7 +116,7 @@ export class ProdutoRepository{
     }
 
 
-  async buscaPreco( produto:any, tabela:any ):Promise<prodPreco[]>{
+static  async buscaPreco( produto:any, tabela:any ):Promise<prodPreco[]>{
     const sql =  ` SELECT pp.PRECO, pp.PRODUTO, pp.TABELA, pp.DATA_RECAD   from ${db_publico}.prod_tabprecos pp
                   join ${db_publico}.tab_precos tp on tp.codigo = pp.tabela 
                   where pp.PRODUTO = ${produto} and tp.CODIGO = ${tabela}   
@@ -132,7 +132,7 @@ export class ProdutoRepository{
     })
   }
 
-  async buscaFotos(produto:any){
+ static async buscaFotos(produto:any){
     const sql =  `  
         SELECT  CAST(FOTO  AS CHAR(1000)  CHARACTER SET latin1)  FOTO  from ${db_publico}.fotos_prod where  PRODUTO = ${produto};    
                 ; ` 
@@ -149,7 +149,7 @@ export class ProdutoRepository{
 
   }
 
-    async buscaCaminhoFotos(){
+  static  async buscaCaminhoFotos(){
       const sql =  `  
       SELECT  CAST(FOTOS AS CHAR(1000)  CHARACTER SET utf8)  FOTOS from ${db_vendas}.parametros;   
                 ; ` 
@@ -166,7 +166,7 @@ export class ProdutoRepository{
 
   }
 
-    async buscaNcm( codigo:any):Promise< [ { CODIGO:number, NCM:string, COD_CEST: string } ] >{
+ static   async buscaNcm( codigo:any):Promise< [ { CODIGO:number, NCM:string, COD_CEST: string } ] >{
     return new Promise( async (resolve, reject)=>{
         const sql = `SELECT CODIGO  , NCM  , COD_CEST   FROM ${db_publico}.class_fiscal where CODIGO=${codigo};` 
       await conn.query(sql,(err, result)=>{
@@ -185,7 +185,7 @@ export class ProdutoRepository{
      * @param codigo codigo da marca
      * @returns 
      */
-    async buscaMarcaProduto( codigo:any):Promise< [ { CODIGO:number, DESCRICAO:string  } ] >{
+static    async buscaMarcaProduto( codigo:any):Promise< [ { CODIGO:number, DESCRICAO:string  } ] >{
     return new Promise( async (resolve, reject)=>{
         const sql = `SELECT CODIGO  ,DESCRICAO   FROM ${db_publico}.cad_pmar where CODIGO=${codigo};` 
       await conn.query(sql,(err, result)=>{
@@ -198,7 +198,7 @@ export class ProdutoRepository{
     })
   }
 
-  async buscaUnidades ( codigo:any):Promise< [ { PRODUTO:number, DESCRICAO:string, SIGLA: string } ] >{
+static  async buscaUnidades ( codigo:any):Promise< [ { PRODUTO:number, DESCRICAO:string, SIGLA: string } ] >{
     return new Promise( async (resolve, reject)=>{
         const sql = `SELECT  PRODUTO, DESCRICAO, SIGLA  FROM ${db_publico}.unid_prod where PRODUTO = ${codigo} AND item = 1 ;` 
       await conn.query(sql,(err, result)=>{

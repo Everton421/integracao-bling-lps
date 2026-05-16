@@ -64,10 +64,8 @@ async postIMGBB ( caminho:string , foto:string ){
 
 async postFoto( data:any ){
 
-    const produto = new ProdutoRepository();
-
-    const caminhoImg:any = await produto.buscaCaminhoFotos();
-    const fotosProduto:any = await produto.buscaFotos(data.CODIGO);
+    const caminhoImg:any = await ProdutoRepository.buscaCaminhoFotos();
+    const fotosProduto:any = await ProdutoRepository.buscaFotos(data.CODIGO);
     let linkFoto:any;
     let links:any =[];
 

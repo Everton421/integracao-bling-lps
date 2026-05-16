@@ -3,7 +3,7 @@ export class DateService {
 
    
 
-      obterHoraAtual(){
+      static obterHoraAtual(){
         const now = new Date(); // Obtém a data e hora atuais
         const hora = String(now.getHours()).padStart(2, '0'); // Adiciona um zero à esquerda se for menor que 10
         const minuto = String(now.getMinutes()).padStart(2, '0'); // Adiciona um zero à esquerda se for menor que 10
@@ -12,7 +12,7 @@ export class DateService {
         return horaInsercao;
       }
 
-        formatarDataHora(data: any): string {
+        static formatarDataHora(data: any): string {
         
             if (!(data instanceof Date)) {
               try {
@@ -39,7 +39,7 @@ export class DateService {
             return `${ano}-${mes}-${dia} ${hora}:${minuto}:${segundos}`;
           }
 
-             formatarData(data:any) {
+             static formatarData(data:any) {
             if (!(data instanceof Date)) {
                 try {
                   data = new Date(data); // Tenta converter para Date
@@ -60,14 +60,14 @@ export class DateService {
               return `${ano}-${mes}-${dia}`;
         }
 
-           obterDataAtual() {
+          static obterDataAtual() {
             const dataAtual = new Date();
             const dia = String(dataAtual.getDate()).padStart(2, '0');
             const mes = String(dataAtual.getMonth() + 1).padStart(2, '0');
             const ano = dataAtual.getFullYear();
             return `${ano}-${mes}-${dia}`;
         }
-             obterDataHoraAtual() {
+            static obterDataHoraAtual() {
             const dataAtual = new Date();
             const dia = String(dataAtual.getDate()).padStart(2, '0');
             const mes = String(dataAtual.getMonth() + 1).padStart(2, '0');
@@ -78,7 +78,7 @@ export class DateService {
             return `${ano}-${mes}-${dia} ${hora}:${minuto}:${segundos}`;
         }
 
-      obterDataAtualSemHoras() {
+      static obterDataAtualSemHoras() {
         const dataAtual = new Date();
         const dia = String(dataAtual.getDate()).padStart(2, '0');
         const mes = String(dataAtual.getMonth() + 1).padStart(2, '0');
@@ -86,7 +86,7 @@ export class DateService {
         return `${ano}-${mes}-${dia} 00:00:00`;
     }
 
-          isValidDateFormat(dateString: string): boolean {
+       static   isValidDateFormat(dateString: string): boolean {
             if (!dateString) return false; // Evita erros com strings vazias/nulas
             const regex = /^\d{4}-\d{2}-\d{2}$/;
             if (!regex.test(dateString)) return false;

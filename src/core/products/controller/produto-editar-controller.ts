@@ -1,5 +1,8 @@
 import { Request, Response } from "express";
 import { ProdutoRepository } from "../data/produto-repository";
+import { ProdutoMapper } from "../mapping/produto-mapper";
+import { ApiConfigRepository } from "../../company/data/api-config-repository";
+import { SyncCategory } from "../../categories/services/sync-category";
 
 export class ProdutoEditarController{
 
@@ -7,16 +10,46 @@ export class ProdutoEditarController{
 
           const codigo = req.params.codigo;
 
-            const produtoRepository = new ProdutoRepository();
+       
+                        let dadosConfig = await ApiConfigRepository.buscaConfig();
+                        const syncCategory = new SyncCategory();
+    
+                        // contem o valor do parametro de envio de estoque ( 0: nao enviar estoque, 1: enviar o estoque) 
+                        const envEstoque = Number(dadosConfig[0].enviar_estoque);
+    
+                        // contem o valor do parametro de envio de preco ( 0: nao enviar preco, 1: enviar o preco) 
+                        const envPreco = Number( dadosConfig[0].enviar_precos)
+                        // tabela onde é feita a consulta dos precos a serem enviados
+                        const tabela_preco = Number( dadosConfig[0].tabela_preco);
+    
 
-        const arrProduto  = await produtoRepository.buscaProduto(Number(codigo));
 
-        const arrEstoque = await produtoRepository.buscaEstoqueReal(Number(codigo));
+        const arrProduto  = await ProdutoRepository.buscaProduto(Number(codigo));
+
+        const arrEstoque = await ProdutoRepository.buscaEstoqueReal(Number(codigo));
 
             let produto = arrProduto[0] as any;
 
             produto = { ...produto, 'ESTOQUE':arrEstoque[0].ESTOQUE };
     
+            const arrProdSelected = await   ProdutoRepository.buscaProduto(Number(codigo));
+                    const prodSelected = arrProdSelected[0];
+    
+               // verifica a categoria do produto
+                    let categoryId = 0;
+                    const resultVerifyCategoryBling  = await syncCategory.verifyCategory(prodSelected.GRUPO);
+                        if( !resultVerifyCategoryBling.success ){
+                    //       resultadosIntegracao.push(resultVerifyCategoryBling.message);
+                    //      return resultadosIntegracao;
+                        }else{
+                            categoryId = resultVerifyCategoryBling.data?.id_bling || 0;
+                        }
+                        
+
+
+               const produtoBling = await  ProdutoMapper.postProdutoMapper(prodSelected,envPreco, categoryId,  tabela_preco );
+            
+
              res.render('produtos/produto-editar', {  produto : produto   });
 
     }

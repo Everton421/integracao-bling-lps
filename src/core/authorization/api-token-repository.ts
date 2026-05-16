@@ -1,5 +1,5 @@
 import { conn_api,database_api } from "../../database/databaseConfig";
-import { DateService } from "../../shared/date-service";
+import { DateService } from "../../shared/utils/date-service";
 export class ApiTokenRepository{
 
     public token?:any;

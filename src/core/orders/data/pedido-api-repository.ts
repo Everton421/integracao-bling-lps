@@ -1,6 +1,6 @@
 import { conn, conn_api, database_api, db_api, db_publico, db_vendas } from "../../../database/databaseConfig"
 import { IPedidoApi } from "../../../interfaces/IPedidoApi";
-import { DateService } from "../../../shared/date-service"
+import { DateService } from "../../../shared/utils/date-service"
  
 
 

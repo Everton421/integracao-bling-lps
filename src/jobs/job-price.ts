@@ -3,14 +3,11 @@ import { ProdutoApiRepository } from "../core/products/data/produto-api-reposito
 import { ProdutoRepository } from "../core/products/data/produto-repository";
 import { verificaTokenTarefas } from "../shared/Middlewares/TokenMiddleware";
 import ConfigApi from "../shared/api";
-import { DateService } from "../shared/date-service";
+import { DateService } from "../shared/utils/date-service";
 
    export class JobPrice{
     private api = new ConfigApi();
     private dateService = new DateService();
-    private produtoApi = new ProdutoApiRepository();
-    private produtoRepository = new ProdutoRepository();
-    private apiConfigRepository = new ApiConfigRepository();
 
     private delay(ms: number) {
         console.log(`Aguardando ${ms / 1000} segundos para enviar o preço...`);
@@ -24,21 +21,21 @@ import { DateService } from "../shared/date-service";
                 await this.api.configurarApi();
 
                 // obtem as configurações da api 
-                const  arrConfig = await  this.apiConfigRepository.buscaConfig();
+                const  arrConfig = await  ApiConfigRepository.buscaConfig();
 
                     if(arrConfig.length  >  0 ){
 
                         const config = arrConfig[0];
                         if(config.ult_env_preco){
                                 // obtem os produtos que já foram enviados com base na data de ultimo envio de preço.
-                            const produtosEnviados  = await this.produtoApi.findChagedAfter(config.ult_env_preco);
+                            const produtosEnviados  = await ProdutoApiRepository.findChagedAfter(config.ult_env_preco);
 
                                 if (produtosEnviados.length > 0 ) {
                                     for (const data of produtosEnviados) {
                                         if(data.Id_bling){
 
                                     // obtem os dados do produto no sistema.
-                                    const resultPrecoSistema = await this.produtoRepository.buscaPreco(data.codigo_sistema, config.tabela_preco);
+                                    const resultPrecoSistema = await ProdutoRepository.buscaPreco(data.codigo_sistema, config.tabela_preco);
                                         if( resultPrecoSistema.length > 0 ){
                                     const precoProduto = resultPrecoSistema[0]
                                  
@@ -52,7 +49,7 @@ import { DateService } from "../shared/date-service";
                                                                 const resultPrecoEnviado = await this.api.config.patch(`/produtos/${data.Id_bling}`, objPatch);
                                                                 if (resultPrecoEnviado.status === 200 || resultPrecoEnviado.status === 201) {
                                                                     await this.delay(1000);
-                                                                    await this.produtoApi.updateByParama({ id_bling: data.Id_bling, data_preco: this.dateService.obterDataHoraAtual() });
+                                                                    await ProdutoApiRepository.updateByParama({ id_bling: data.Id_bling, data_preco: DateService.obterDataHoraAtual() });
                                                                 //  return { ok: true, erro: false, msg: "preco atualizado com sucesso!" }
                                                                     console.log(`[V] preco do produto ${data.codigo_sistema} atualizado com sucesso!`);
                                                                 }
@@ -74,7 +71,7 @@ import { DateService } from "../shared/date-service";
                            }
                     }
 
-                    await this.apiConfigRepository.atualizaDados({ult_env_preco: this.dateService.obterDataHoraAtual()})
+                    await ApiConfigRepository.atualizaDados({ult_env_preco: DateService.obterDataHoraAtual()})
         }
     }
 }

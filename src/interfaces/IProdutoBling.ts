@@ -31,7 +31,7 @@ interface midia{
             { 
                 link:string
             }
-        ]
+         ]  | null
     }
 }
 interface dimensoes{
@@ -41,8 +41,8 @@ interface dimensoes{
     unidadeMedida:number
 }
 interface tributacao{
-    ncm:string | null,
-    cest:string | null
+    ncm?:string | null,
+    cest?:string | null
 }
 interface categoria{
 

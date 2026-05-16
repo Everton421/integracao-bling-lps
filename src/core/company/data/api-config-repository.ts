@@ -26,7 +26,7 @@ type param = {
 export class ApiConfigRepository{
 
         
-            async buscaConfig():Promise<IConfig[]>{
+          static  async buscaConfig():Promise<IConfig[]>{
                 return new Promise( async (resolve, reject)=>{
                     const sql =
                     ` SELECT 
@@ -45,7 +45,7 @@ export class ApiConfigRepository{
             }
         
 
-     async atualizaDados( json:Partial<IConfig> ):Promise<OkPacket>{
+    static async atualizaDados( json:Partial<IConfig> ):Promise<OkPacket>{
         return new Promise ( async (resolve,reject ) =>{
             let BaseSql = `
                 UPDATE ${database_api}.config set   

@@ -2,7 +2,7 @@ import { IResponseErrorApi } from "../../../interfaces/IResponseErrorApi";
 import { IProdutoBlingSemPreco, ProdutoMapper } from "../mapping/produto-mapper";
 import { IProductSystem } from "../../../interfaces/IProductSystem";
 import ConfigApi from "../../../shared/api";
-import { DateService } from "../../../shared/date-service";
+import { DateService } from "../../../shared/utils/date-service";
 import { SyncPrice } from "../../prices/services/sync-price";
 import { SyncStock } from "../../inventory/services/sync-stock";
 import { ApiConfigRepository } from "../../company/data/api-config-repository";
@@ -19,17 +19,19 @@ type dados = {
 export class  SyncProduct{
          
          private   api = new ConfigApi();
-         private dateService = new DateService();
-         private  produtoApi = new ProdutoApiRepository();
-         private produtoRepository = new ProdutoRepository();
+       
+    
+         
          private syncStock = new SyncStock();
          private syncPrice = new SyncPrice();
      
-         private produto = new ProdutoRepository();
-          private categoriaRepository = new CategoriaApiRepository();
+       
          
-         
-        private delay(ms: number) {
+        constructor(){
+            ProdutoRepository
+        }
+          
+    private delay(ms: number) {
         console.log(`Aguardando ${ms / 1000} segundos para atualizar...`);
         return new Promise(resolve => setTimeout(resolve, ms));
     }
@@ -78,13 +80,13 @@ export class  SyncProduct{
                 saldo: 0,
                 variacao: tipoVariacao,
                 com_variacao: comVariacao,
-                data_recad_sistema: this.dateService.formatarDataHora(dados.data_recad_sistema),
-                data_estoque: this.dateService.obterDataHoraAtual(),
-                data_envio: this.dateService.obterDataHoraAtual(),
+                data_recad_sistema: DateService.formatarDataHora(dados.data_recad_sistema),
+                data_estoque: DateService.obterDataHoraAtual(),
+                data_envio: DateService.obterDataHoraAtual(),
                 data_preco:'2001-01-01 10:00:00'
             }
             try {
-                let prod: any = await this.produtoApi.inserir(produtoEnviado);
+                let prod: any = await ProdutoApiRepository.inserir(produtoEnviado);
                  if (prod.affectedRows === 1) {
                      return { ok: true, erro:false, produto: produtoEnviado ,msg:   ` Registrado vinculo para o produto: ${ dados.codigo}     idBling: ${ dadosProdutoBling[0].id } `  }
                 }
@@ -115,12 +117,12 @@ export class  SyncProduct{
                                            if(response.status ===200 || response.status ===201   ){
                                             let id_bling = response.data.data.id;
                                                 let msgSucess =` produto ${produtoBling.codigo} enviado com sucesso  `
-                                                let prod =  await this.produtoApi.inserir(
+                                                let prod =  await ProdutoApiRepository.inserir(
                                                             {
                                                                 codigo_sistema:produtoBling.codigo,
-                                                                data_envio: this.dateService.obterDataHoraAtual(),
-                                                                data_estoque: this.dateService.obterDataHoraAtual(),
-                                                                data_recad_sistema:  this.dateService.formatarDataHora(produtoSistema.DATA_RECAD),
+                                                                data_envio: DateService.obterDataHoraAtual(),
+                                                                data_estoque: DateService.obterDataHoraAtual(),
+                                                                data_recad_sistema:  DateService.formatarDataHora(produtoSistema.DATA_RECAD),
                                                                 descricao:produtoBling.nome,
                                                                 id_bling:response.data.data.id,
                                                                 saldo:0,
@@ -133,9 +135,9 @@ export class  SyncProduct{
                                                         if( enviEstoque > 0 ){
                                                              console.log(response.status, "atualizando saldo !")
                                                               await this.delay(1000);  
-                                                            const arrEstoque = await this.produtoRepository.buscaEstoqueReal(produtoBling.codigo, 1 );
+                                                            const arrEstoque = await   ProdutoRepository.buscaEstoqueReal(produtoBling.codigo, 1 );
                                                             const estoque = arrEstoque[0].ESTOQUE    
-                                                            const arrDeposito = await this.produtoApi.findDefaultDeposit();
+                                                            const arrDeposito = await ProdutoApiRepository.findDefaultDeposit();
                                                                   let deposito;
                                                                 if(arrDeposito.length > 0){
                                                                     deposito = arrDeposito[0].Id_bling
@@ -143,7 +145,7 @@ export class  SyncProduct{
                                                                 }else{
                                                                         deposito = await this.syncStock.getDeposit();
                                                                 }
-                                                                await this.syncStock.postEstoque( id_bling, estoque,  deposito, produtoBling.codigo, this.dateService.obterDataHoraAtual() )
+                                                                await this.syncStock.postEstoque( id_bling, estoque,  deposito, produtoBling.codigo, DateService.obterDataHoraAtual() )
                                                                 msgSucess = msgSucess + ` saldo: ${estoque} `
                                                             }
                                                 
@@ -177,9 +179,9 @@ export class  SyncProduct{
                         if (response.status === 200 || response.status === 201) {
 
                                             if( envEstoque > 0 ){
-                                                     const arrEstoque = await this.produtoRepository.buscaEstoqueReal(produtoBling.codigo , setor );
+                                                     const arrEstoque = await   ProdutoRepository.buscaEstoqueReal(produtoBling.codigo , setor );
                                                     const estoque = arrEstoque[0].ESTOQUE    
-                                                    const arrDeposito = await this.produtoApi.findDefaultDeposit();
+                                                    const arrDeposito = await ProdutoApiRepository.findDefaultDeposit();
                                                         let deposito;
                                                     if(arrDeposito.length > 0){
                                                           deposito = arrDeposito[0].Id_bling
@@ -187,16 +189,16 @@ export class  SyncProduct{
                                                     }else{
                                                             deposito = await this.syncStock.getDeposit();
                                                     }
-                                                        await this.syncStock.postEstoque( idProdutobling, estoque,  deposito, produtoBling.codigo, this.dateService.obterDataHoraAtual() )
+                                                        await this.syncStock.postEstoque( idProdutobling, estoque,  deposito, produtoBling.codigo, DateService.obterDataHoraAtual() )
                                                   }
                                               if( envPreco > 0 ){
                                                     await this.syncPrice.postPrice(idProdutobling, produtoBling.codigo, tabela_preco)
                                                   }
 
                             try {
-                                let resultUpdate = await this.produtoApi.updateByParama({
+                                let resultUpdate = await ProdutoApiRepository.updateByParama({
                                     id_bling:  idProdutobling,
-                                    data_envio: this.dateService.obterDataHoraAtual(),
+                                    data_envio: DateService.obterDataHoraAtual(),
                                     descricao: produtoBling.nome
                                 });
                                 if(  resultUpdate && resultUpdate.affectedRows > 0 ){
@@ -233,8 +235,7 @@ export class  SyncProduct{
             const resultadosIntegracao: any[] = [];
             
                         // configurações para envio das informações
-                    let objConfig  = new ApiConfigRepository();
-                    let dadosConfig = await objConfig.buscaConfig();
+                    let dadosConfig = await ApiConfigRepository.buscaConfig();
                     const syncCategory = new SyncCategory();
 
                     // contem o valor do parametro de envio de estoque ( 0: nao enviar estoque, 1: enviar o estoque) 
@@ -255,9 +256,9 @@ export class  SyncProduct{
 
                     console.log(`Processando envio/atualização do produto código: ${codigoSelecionado}`);
                     //  tenta buscar o produto selecionado pelo usuario na tabela da integração. 
-                    const arrProdutoSincronizado = await this.produtoApi.findByCodeSystem(codigoSelecionado);
+                    const arrProdutoSincronizado = await ProdutoApiRepository.findByCodeSystem(codigoSelecionado);
                     // busca o item no banco de dados do sistema
-                    const arrProdSelected = await this.produto.buscaProduto(codigoSelecionado);
+                    const arrProdSelected = await   ProdutoRepository.buscaProduto(codigoSelecionado);
 
                     
                         if (!arrProdSelected || arrProdSelected.length === 0) {

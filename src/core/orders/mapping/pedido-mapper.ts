@@ -5,7 +5,7 @@ import { pro_orca } from "../../../interfaces/pro_orca";
 import { ProdutoBling } from "../../../interfaces/produto-bling";
 import { produtoPedidoBling } from "../../../interfaces/produto-pedido-bling";
 import ConfigApi from "../../../shared/api";
-import { DateService } from "../../../shared/date-service";
+import { DateService } from "../../../shared/utils/date-service";
 
 export class PedidoMapper{
         dateService = new DateService();

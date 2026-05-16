@@ -1,5 +1,5 @@
 import { conn_api, database_api } from "../../../database/databaseConfig";
-import { DateService } from "../../../shared/date-service";
+import { DateService } from "../../../shared/utils/date-service";
 
 type categoryIntegration = {
     Id_bling:number, descricao:string, codigo_sistema:number, data_envio:string

@@ -1,7 +1,7 @@
 import { ProdutoApiRepository } from "../../products/data/produto-api-repository";
 import { ProdutoRepository } from "../../products/data/produto-repository";
 import ConfigApi from "../../../shared/api";
-import { DateService } from "../../../shared/date-service";
+import { DateService } from "../../../shared/utils/date-service";
 import { verificaTokenTarefas } from "../../../shared/Middlewares/TokenMiddleware";
 
 export class SyncPrice {

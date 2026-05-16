@@ -2,18 +2,15 @@ import { verificaTokenTarefas } from "../../../shared/Middlewares/TokenMiddlewar
 import { ProdutoRepository } from "../../products/data/produto-repository";
 import { ProdutoApiRepository } from "../../products/data/produto-api-repository";
 import ConfigApi from "../../../shared/api";
-import { DateService } from "../../../shared/date-service";
+import { DateService } from "../../../shared/utils/date-service";
 import { ApiConfigRepository } from "../../company/data/api-config-repository";
 
 
 export class SyncStock{
      
 
-              private dateService = new DateService();
-              private produtoApi = new ProdutoApiRepository();
-              private produto = new ProdutoRepository();
+ 
               private api = new ConfigApi();
-               private apiConfigRepository = new ApiConfigRepository();
 
          private delay(ms: number) {    
             console.log(`Aguardando ${ms / 1000} segundos...`);
@@ -58,7 +55,7 @@ export class SyncStock{
                                        estoqueEnviado =  await  this.api.config.post('/estoques', estoque);
                                        status = estoqueEnviado.status
                                        if(status === 201 || status ===200){
-                                           await this.produtoApi.atualizaSaldoEnviado(idProdutobling , saldo, this.dateService.formatarDataHora(data_estoque));
+                                           await ProdutoApiRepository.atualizaSaldoEnviado(idProdutobling , saldo, DateService.formatarDataHora(data_estoque));
                                          //  console.log(estoqueEnviado.data);    
                                            //console.log(` enviado saldo para produto: ${ codigoProdutoSistema}   saldo: ${saldo}  idBling: ${ idProdutobling } `);
                                            return { ok: true, erro:false,  msg:   ` enviado saldo para produto: ${ codigoProdutoSistema}   saldo: ${saldo}  idBling: ${ idProdutobling } `    }
@@ -106,7 +103,7 @@ export class SyncStock{
                                   }
                               })
                               try{
-                                  await produtoApi.insertDeposit(objeDeposit)
+                                  await ProdutoApiRepository.insertDeposit(objeDeposit)
                           }catch(e){
                               console.log(e)
                               return;
@@ -126,9 +123,9 @@ export class SyncStock{
         try {
             await    this.api.configurarApi(); // Aguarda a configuração da API
 
-            const resultDeposito = await this.produtoApi.findDefaultDeposit();
+            const resultDeposito = await ProdutoApiRepository.findDefaultDeposit();
 
-            const arrApiConfig = await this.apiConfigRepository.buscaConfig();
+            const arrApiConfig = await ApiConfigRepository.buscaConfig();
                 const configApi = arrApiConfig[0];
             let idDepositoBling;
             if (resultDeposito.length > 0) {
@@ -141,11 +138,11 @@ export class SyncStock{
                 }
             }
 
-            const produtosEnviados: any = await this.produtoApi.buscaSincronizados();
+            const produtosEnviados: any = await ProdutoApiRepository.buscaSincronizados();
             if (produtosEnviados.length > 0) {
 
                 for (const data of produtosEnviados) {
-                    const resultSaldo: any = await this.produto.buscaEstoqueReal(data.codigo_sistema, configApi.setor);
+                    const resultSaldo: any = await ProdutoRepository.buscaEstoqueReal(data.codigo_sistema, configApi.setor);
 
                     let saldo_enviado = data.saldo_enviado;
 
@@ -157,7 +154,7 @@ export class SyncStock{
                         data_estoque = resultSaldo[0].DATA_RECAD
                     } else {
                         saldoReal = 0;
-                        data_estoque =  this.dateService.obterDataHoraAtual()
+                        data_estoque =  DateService.obterDataHoraAtual()
                     }
                     //console.log( new Date(data_estoque) ,' > ', new Date(data.data_estoque))
 
@@ -193,13 +190,13 @@ export class SyncStock{
                                     status = estoqueEnviado.status
 
                                     if (status === 201 || status === 200) {
-                                        await this.produtoApi.atualizaSaldoEnviado(data.Id_bling, saldoReal, this.dateService.formatarDataHora(data_estoque));
+                                        await ProdutoApiRepository.atualizaSaldoEnviado(data.Id_bling, saldoReal, DateService.formatarDataHora(data_estoque));
                                         console.log(`[V]  enviado saldo para produto: ${data.codigo_sistema}   saldo: ${saldoReal}  idBling: ${data.Id_bling} `);
                                     }
                                 }
                             } else {
                                 console.log(` [V] enviado saldo para produto: ${data.codigo_sistema}   saldo: ${saldoReal}  idBling: ${data.Id_bling} `);
-                                await this.produtoApi.atualizaSaldoEnviado(data.Id_bling, saldoReal,  this.dateService.formatarDataHora(data_estoque));
+                                await ProdutoApiRepository.atualizaSaldoEnviado(data.Id_bling, saldoReal,  DateService.formatarDataHora(data_estoque));
                             }
                         } catch (err) {
                             console.log(err + ` erro ao enviar o estoque para o produto ${data.codigo_sistema} `);
@@ -215,7 +212,7 @@ export class SyncStock{
         } catch (error) {
             console.log(error)
         }
-        await this.apiConfigRepository.atualizaDados({ult_env_estoque:this.dateService.obterDataHoraAtual()})
+        await ApiConfigRepository.atualizaDados({ult_env_estoque:DateService.obterDataHoraAtual()})
     }
     
 }

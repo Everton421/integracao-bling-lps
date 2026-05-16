@@ -19,7 +19,6 @@ export  class Job{
                   private syncStock = new SyncStock();
                   private syncOrders = new SyncORders();
                   private syncPrice = new SyncPrice();
-                    private apiConfigRepository = new ApiConfigRepository();
   async main() {
         await verificaTokenTarefas();
 
@@ -41,7 +40,7 @@ export  class Job{
         let aux:IConfig[] = [] ;
 
         try {
-          aux = await this.apiConfigRepository.buscaConfig();
+          aux = await ApiConfigRepository.buscaConfig();
         } catch (err) {
           console.log(err);
         }

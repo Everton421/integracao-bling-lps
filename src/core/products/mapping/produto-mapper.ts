@@ -20,32 +20,48 @@ export class ProdutoMapper {
  static async postProdutoMapper(produto: IProductSystem, sendPrice: number, categoryIdBling: number, tabela?: number): Promise<IProdutoBlingSemPreco> {
     return new Promise(async (resolve, reject) => {
 
-      const produtoRepository = new ProdutoRepository();
-      const categoriaRepository = new CategoriaApiRepository();
       const freeImgHost = new PostFreeImgHost();
       let preco: number = 0;
 
       if (sendPrice === 1) {
-        const arrPreco = await produtoRepository.buscaPreco(produto.CODIGO, tabela)
+        const arrPreco = await ProdutoRepository.buscaPreco(produto.CODIGO, tabela)
         preco = arrPreco[0].PRECO;
       }
 
-          const arrMarca = await produtoRepository.buscaMarcaProduto(produto.MARCA)
+          const arrMarca = await ProdutoRepository.buscaMarcaProduto(produto.MARCA)
 
       const marca = arrMarca && arrMarca.length > 0 ?  arrMarca[0].DESCRICAO : '';
 
-      const arrNcm = await produtoRepository.buscaNcm(produto.CODIGO);
+      const arrNcm = await ProdutoRepository.buscaNcm(produto.CODIGO);
+       
+
+       let tributacaoBling =  { };
+
+      let ncm = null;
+      let  cod_cest = null;
+
+      if(arrNcm.length > 0){
+            const  { COD_CEST, NCM } =arrNcm[0];
+
+            if(COD_CEST)  tributacaoBling = { ...tributacaoBling,  cod_cest : COD_CEST  } ;
+            if(NCM )  tributacaoBling = { ...tributacaoBling,  ncm : NCM   } ;
+              
+        }
+
+
+ 
+        
       
-      const ncm = arrNcm && arrNcm.length > 0 ? arrNcm[0].NCM : null;
-      const cod_cest = arrNcm && arrNcm.length > 0 ? arrNcm[0].COD_CEST : null;
-      
-      const arrUnidades = await produtoRepository.buscaUnidades(produto.CODIGO);
+      const arrUnidades = await ProdutoRepository.buscaUnidades(produto.CODIGO);
       const unidade = arrUnidades[0].SIGLA
     const  gtin = produto.NUM_FABRICANTE
       //envio de imagen
       //let links = await imgController.postFoto( produto ) ;
-      let links = await freeImgHost.postFoto(produto) as [{ link: string }];
-      //
+       const resultFotos = await freeImgHost.postFoto(produto) as [{ link: string }];
+      
+       let links = resultFotos && resultFotos.length ? resultFotos  : null 
+       //
+
 
       const post: IProdutoBling = {
         codigo: produto.CODIGO,
@@ -65,8 +81,15 @@ export class ProdutoMapper {
         largura: produto.LARGURA,
         altura: produto.ALTURA,
         profundidade: produto.COMPRIMENTO,
-        dimensoes: { altura: produto.ALTURA, largura: produto.LARGURA, profundidade: produto.COMPRIMENTO  ,unidadeMedida :1},
-        tributacao: { cest: cod_cest, ncm: ncm, },
+
+        dimensoes: { 
+          altura: produto.ALTURA,
+           largura: produto.LARGURA,
+            profundidade: produto.COMPRIMENTO  
+            ,unidadeMedida :1
+          },
+
+        tributacao: tributacaoBling,
         midia: {
           imagens: {
             imagensURL: links,
@@ -76,6 +99,7 @@ export class ProdutoMapper {
           id: categoryIdBling
         }
       };
+      console.log(post)
       resolve(post)
     })
   }

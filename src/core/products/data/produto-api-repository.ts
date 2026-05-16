@@ -1,5 +1,6 @@
 import { conn_api, database_api,    db_publico,  } from "../../../database/databaseConfig"
-import { DateService } from "../../../shared/date-service"
+import { DateService } from "../../../shared/utils/date-service"
+import { FormatString } from "../../../shared/utils/format-string"
 
 /**
  *   representa os dados vindos da tabela de produtos da integração.
@@ -87,18 +88,15 @@ type InputDeposito  = {
 export class ProdutoApiRepository{
 
          dateService = new DateService();
+ 
 
-    formatDescricao(descricao: string): string {
-    return descricao.replace(/'/g, '');
-    }
-
-        async inserir( value:inputProdApi ){
+    static    async inserir( value:inputProdApi ){
           
-            const dateService = new DateService();
+            
             return new Promise( async (resolve, reject)=>{
 
                 const { id_bling, data_envio, codigo_sistema , descricao, saldo, variacao, data_recad_sistema, data_estoque, com_variacao, data_preco} = value;
-                let descricaoSemAspas = this.formatDescricao(descricao);
+                let descricaoSemAspas =   FormatString.formatDescricao(descricao);
 
                 const sql = ` INSERT INTO ${database_api}.produtos VALUES
                  (
@@ -127,7 +125,7 @@ export class ProdutoApiRepository{
 
 
 
-        async buscaTodos():Promise <IProdutoApiSystem[]> {
+    static    async buscaTodos():Promise <IProdutoApiSystem[]> {
             return new Promise( async ( resolve, reject )=>{
                const sql = `  
 
@@ -148,7 +146,7 @@ export class ProdutoApiRepository{
             })
         }
 
-        async buscaSincronizados():Promise<IProdutoApi[]>{
+       static  async buscaSincronizados():Promise<IProdutoApi[]>{
             return new Promise( async ( resolve, reject )=>{
                const sql    = `  SELECT * FROM ${database_api}.produtos ;`
             
@@ -166,7 +164,7 @@ export class ProdutoApiRepository{
          * @param data 
          * @returns 
          */
-          async findChagedAfter(data:string):Promise<IProductSinc[]>{
+     static     async findChagedAfter(data:string):Promise<IProductSinc[]>{
             return new Promise( async ( resolve, reject )=>{
 
                     const sql = `
@@ -189,7 +187,7 @@ export class ProdutoApiRepository{
             })
         }
 
-      async findByIdBling( id:string ):Promise <IProdutoApi[]> {
+  static    async findByIdBling( id:string ):Promise <IProdutoApi[]> {
             return new Promise( async ( resolve, reject )=>{
                 const sql = ` SELECT * FROM ${database_api}.produtos WHERE  Id_bling = '${id}' ;`
                 await conn_api.query(sql, (err, result:IProdutoApi[] )=>{
@@ -203,7 +201,7 @@ export class ProdutoApiRepository{
         } 
        
 
-        async findByCodeSystem( codigo:number ):Promise <IProdutoApi[]> {
+     static   async findByCodeSystem( codigo:number ):Promise <IProdutoApi[]> {
             return new Promise( async ( resolve, reject )=>{
                 const sql = ` SELECT * FROM ${database_api}.produtos WHERE  codigo_sistema = ${codigo} ;`
                 await conn_api.query(sql, (err, result:IProdutoApi[] )=>{
@@ -216,7 +214,7 @@ export class ProdutoApiRepository{
             })
         } 
 
-        async atualizaSaldoEnviado( id:any, saldo:any, data_estoque:string ){
+  static      async atualizaSaldoEnviado( id:any, saldo:any, data_estoque:string ){
             return new Promise( async ( resolve, reject )=>{
                 const sql = ` UPDATE ${database_api}.produtos set saldo_enviado = ${saldo}, data_estoque = '${data_estoque}'  WHERE  Id_bling = ${id} ;`
 
@@ -231,7 +229,7 @@ export class ProdutoApiRepository{
         }
         
         
-        async updateByParama( param:Partial< inputProdApi> ):Promise<OkPacket | undefined>{
+     static   async updateByParama( param:Partial< inputProdApi> ):Promise<OkPacket | undefined>{
             if(!param.id_bling){
                     console.log("É necessario informar o id do produto para atualizar o produto no banco de dados ")
                 return;
@@ -254,7 +252,7 @@ export class ProdutoApiRepository{
              
                 if( param.data_envio){
                     conditions.push(' data_envio = ? ')
-                    values.push(  this.dateService.formatarDataHora(param.data_envio));
+                    values.push(   DateService.formatarDataHora(param.data_envio));
                 }
                 if(param.saldo){
                      conditions.push(' saldo_enviado = ? ')
@@ -272,17 +270,17 @@ export class ProdutoApiRepository{
 
                 if( param.data_recad_sistema){
                     conditions.push(' data_recad_sistema = ? ')
-                    values.push( this.dateService.formatarDataHora(param.data_recad_sistema))
+                    values.push( DateService.formatarDataHora(param.data_recad_sistema))
                 }
 
                 if( param.data_preco){
                     conditions.push(' data_preco = ? ')
-                    values.push( this.dateService.formatarDataHora(param.data_preco))
+                    values.push( DateService.formatarDataHora(param.data_preco))
                 }
 
                  if( param.data_estoque){
                     conditions.push(' data_estoque = ? ')
-                    values.push( this.dateService.formatarDataHora(param.data_estoque))
+                    values.push( DateService.formatarDataHora(param.data_estoque))
                 }
 
                 let finalSql = sql + conditions.join(' , ') + ` WHERE Id_bling = ${param.id_bling}`
@@ -295,7 +293,7 @@ export class ProdutoApiRepository{
                 })
             })
         }
-  async findDeAllDeposit() :Promise<IDeposito[]>{
+ static async findDeAllDeposit() :Promise<IDeposito[]>{
                return new Promise( async ( resolve, reject )=>{
                 const sql = ` SELECT * FROM ${database_api}.depositos  ;`
                 await conn_api.query(sql, (err, result:IDeposito[] )=>{
@@ -308,7 +306,7 @@ export class ProdutoApiRepository{
             })
         }
 
-        async findDefaultDeposit() :Promise<IDeposito[]>{
+     static   async findDefaultDeposit() :Promise<IDeposito[]>{
                return new Promise( async ( resolve, reject )=>{
                 const sql = ` SELECT * FROM ${database_api}.depositos WHERE  padrao = 'S' ;`
                 await conn_api.query(sql, (err, result:IDeposito[] )=>{
@@ -321,13 +319,13 @@ export class ProdutoApiRepository{
             })
         }
 
-         async insertDeposit( value:InputDeposito ){
+   static      async insertDeposit( value:InputDeposito ){
           
             const dateService = new DateService();
             return new Promise( async (resolve, reject)=>{
 
                 const { id_bling, descricao, padrao, situacao} = value;
-                let descricaoSemAspas = this.formatDescricao(descricao);
+                let descricaoSemAspas =  FormatString.formatDescricao(descricao);
 
                 const sql = ` INSERT INTO ${database_api}.depositos VALUES ('${id_bling}','${descricao}','${situacao}', '${padrao }')` 
 

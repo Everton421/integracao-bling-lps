@@ -23,11 +23,8 @@ import { ProdutoEditarController } from "../core/products/controller/produto-edi
 const router = Router();
 
 
-const produtoRepository = new ProdutoRepository();
 const configApi = new apiController();
-const produtoApiRepository = new ProdutoApiRepository();
 const categoryRepository = new CategoriaRepository();
-const apiConfigRepository = new ApiConfigRepository();
 const syncEstock = new SyncStock();
 const pedidoApiRepository = new PedidoApiRepository();
 const clienteApiRepository = new ClienteApiRepository();
@@ -39,13 +36,13 @@ router.get('/', async (req, res) => {
 
 router.get('/config', async (req, res) => {
   const data = await configApi.buscaConfig();
-  const tabelas = await produtoRepository.buscaTabelaDePreco();
+  const tabelas = await ProdutoRepository.buscaTabelaDePreco();
   res.render('config', { 'config': data, 'tabelas': tabelas });
 })
 
 router.get('/produtos', verificaToken, async (req, res) => {
-  const produtos = await produtoApiRepository.buscaTodos();
-  const tabelas = await produtoRepository.buscaTabelaDePreco();
+  const produtos = await ProdutoApiRepository.buscaTodos();
+  const tabelas = await ProdutoRepository.buscaTabelaDePreco();
   res.render('produtos', { 'produtos': produtos, 'tabelas': tabelas });
 
 
@@ -57,7 +54,7 @@ router.get('/produtos/:codigo', verificaToken, new ProdutoEditarController().exe
 router.post('/api/produtos', verificaToken, async (req: Request, res: Response) => {
   const obj = new ProdutoController()
 
-  let dadosConfig = await apiConfigRepository.buscaConfig();
+  let dadosConfig = await ApiConfigRepository.buscaConfig();
    
    if (dadosConfig[0].enviar_produtos === 'E') {
      await obj.enviaProduto(req, res);
@@ -81,9 +78,8 @@ router.get('/clientes', verificaToken, async (req, res) => {
 
 
 router.get('/configuracoes', async (req, res) => {
-  let dadosConfig = await apiConfigRepository.buscaConfig();
-  let objProdutos = new ProdutoRepository();
-  let tabelasDePreco = await objProdutos.buscaTabelaDePreco();
+  let dadosConfig = await ApiConfigRepository.buscaConfig();
+  let tabelasDePreco = await ProdutoRepository.buscaTabelaDePreco();
   let setores = await setorRepository.buscaSetor()
   const client_id = process.env.CLIENT_ID;
   const secret = process.env.CLIENT_SECRET;
@@ -117,14 +113,13 @@ router.get('/pedidos', async (req, res) => {
 
 
 router.get('/estoque', verificaToken, async () => {
-  let dadosConfig = await apiConfigRepository.buscaConfig();
+  let dadosConfig = await ApiConfigRepository.buscaConfig();
   if (dadosConfig[0].enviar_estoque > 0) {
     await syncEstock.enviaEstoque();
   }
 })
 router.get('/depositos', async (req, res) => {
-  const produtoApiRepository= new ProdutoApiRepository();
-    const depositos = await produtoApiRepository.findDeAllDeposit()
+    const depositos = await ProdutoApiRepository.findDeAllDeposit()
   res.render('depositos' ,{ depositos:depositos})
 })
 router.post('/ajusteConfig', verificaToken, new apiController().ajusteConfig)

@@ -87,12 +87,10 @@ export class PostFreeImgHost {
 
      async postFoto( data:any ){
     
-        const produto = new ProdutoRepository();
     
-        const fotosProduto:any = await produto.buscaFotos(data.CODIGO);
+        const fotosProduto:any = await ProdutoRepository.buscaFotos(data.CODIGO);
         let links =[];
-        const apiConfig = new ApiConfigRepository();
-        const config = await apiConfig.buscaConfig();
+        const config = await ApiConfigRepository.buscaConfig();
 
         if( fotosProduto.length > 0 ){
             const caminho = config[0].caminho_fotos;
